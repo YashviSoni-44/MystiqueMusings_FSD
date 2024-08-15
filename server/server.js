@@ -105,4 +105,15 @@ server.post("/signup",(req,res)=>{
             personal_info:{fullname, email, password:hashed_password, username}
         })
         user.save().then((u)=>{
-            re
+            return res.status(200).json({user:u})
+        })
+        .catch(err=>{
+            return res.status(500).json({"error":err.message})
+        })
+        console.log(hashed_password)
+    })
+})
+
+server.listen(port,()=>{
+    console.log('listening on port -> '+port)
+})
