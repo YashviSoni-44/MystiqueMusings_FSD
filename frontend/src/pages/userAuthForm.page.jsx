@@ -1,5 +1,5 @@
 import React, { useContext, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import InputBox from '../components/input.component';
 import FaceIcon from '@mui/icons-material/Face';
 import EmailIcon from '@mui/icons-material/AlternateEmail';
@@ -11,22 +11,29 @@ import AnimationWrapper from '../common/page-animation';
 import { ThemeModeContext } from '../components/navbar.component';
 import {Toaster, toast} from 'react-hot-toast';
 import axios from 'axios';
+import { storeInSession } from '../common/session';
+import { UserContext } from '../App';
 
 const UserAuthForm = ({ type }) => {
+
+    const authForm = useRef();
+    const themeMode = useContext(ThemeModeContext);
+
+    let {userAuth:{access_token}, setUserAuth}=useContext(UserContext)
+
+    console.log(access_token)
 
     const userAuthThroughServer = (serverRoute,formData) =>{
         
         axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, formData)
         .then(({ data }) =>{
-            console.log(data)
+            storeInSession("user", JSON.stringify(data))
+            setUserAuth(data)
         })
         .catch(({ reponse }) => {
             toast.error(reponse.data.error)
         })
     }
-
-    const authForm = useRef();
-    const themeMode = useContext(ThemeModeContext);
     
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -66,6 +73,9 @@ const UserAuthForm = ({ type }) => {
     };
 
     return (
+        access_token ?
+        <Navigate to="/"/>
+        :
         <AnimationWrapper keyValue={type}>
             <section className="h-cover flex items-center justify-center"
                 style={{ 
