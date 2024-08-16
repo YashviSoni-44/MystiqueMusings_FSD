@@ -20,6 +20,10 @@ import { useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import { Outlet } from 'react-router-dom';
 import { Link } from '@mui/material';
+import { UserContext } from '../App';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import UserNavigationPanel from './user-navigation.component';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 
 const ThemeModeContext = createContext();
 
@@ -122,26 +126,19 @@ const darkTheme = createTheme({
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = useState(null);
-  const [anchorElUser, setAnchorElUser] = useState(null);
   const [themeMode, setThemeMode] = useState('dark'); // default theme set to dark
   const [searchOpen, setSearchOpen] = useState(false); // state to control search visibility
   const [searchClose, setSearchClose] = useState(true); // state to control search icon visibility
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const [userNavPanel, setUserNavPanel]=useState(false);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
   };
 
   const handleThemeChange = (event) => {
@@ -152,6 +149,18 @@ function ResponsiveAppBar() {
     setSearchOpen(!searchOpen);
     setSearchClose(!searchClose);
   };
+
+  const handleUserNavPanel = () =>{
+    setUserNavPanel(currentVal => !currentVal);
+  }
+
+  const handleBlur = () =>{
+    setTimeout(()=>{
+      setUserNavPanel(false);
+    },200);
+  }
+
+  const {userAuth, userAuth: {access_token, profile_img}} = useContext(UserContext)
 
   return (
     <ThemeModeContext.Provider value={themeMode}>
@@ -323,43 +332,41 @@ function ResponsiveAppBar() {
                 color="default"
               />
 
-              <Link className="btn-light py-2" style={{margin:5, textDecoration: "none"}} href="/signin">
-                Sign In
-              </Link>
-              <Link className="btn-light py-2 hidden md:block" style={{margin:5, textDecoration: "none"}} href="/signup">
-                Sign Up
+              <Link to="/editor" className="hidden md:flex gap-2 link bg-white rounded-full h-12">
+                <DriveFileRenameOutlineIcon/>
+                <p>Write</p>         
               </Link>
 
-              <Box sx={{ flexGrow: 0 }}>
-                <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                  </IconButton>
-                </Tooltip>
-                <Menu
-                  sx={{ mt: '45px' }}
-                  id="menu-appbar"
-                  anchorEl={anchorElUser}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
-                >
-                  {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                      <Typography textAlign="center">{setting}</Typography>
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </Box>
-              
+              {
+                access_token ? 
+                <>
+                  <Link to="/dashboard/notification">
+                    <button className='w-12 h-12 rounded-full bg-grey relative hover:bg-black/40 ml-2'>
+                      <NotificationsIcon className='text-4xl'/>
+                    </button>
+                  </Link>
+
+                  <div className="relative mt-1 ml-2" onClick={handleUserNavPanel} onBlur={handleBlur}>
+                    <button classNme="w-12 h-12 mt-1">
+                      <img src={profile_img} className='w-12 h-12 object-cover rounded-full'/>
+                    </button>
+
+                    {userNavPanel ? <UserNavigationPanel/>
+                    :""}
+                    
+                  </div>
+                </>
+                :
+                <>
+                  <Link className="btn-light py-2" style={{margin:5, textDecoration: "none"}} href="/signin">
+                    Sign In
+                  </Link>
+                  <Link className="btn-light py-2 hidden md:block" style={{margin:5, textDecoration: "none"}} href="/signup">
+                    Sign Up
+                  </Link>
+                </>
+              }
+
             </Toolbar>
           </Container>
         </AppBar>

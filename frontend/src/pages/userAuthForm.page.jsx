@@ -13,6 +13,7 @@ import {Toaster, toast} from 'react-hot-toast';
 import axios from 'axios';
 import { storeInSession } from '../common/session';
 import { UserContext } from '../App';
+import { authWithGoogle } from '../common/firebase';
 
 const UserAuthForm = ({ type }) => {
 
@@ -23,17 +24,39 @@ const UserAuthForm = ({ type }) => {
 
     console.log(access_token)
 
-    const userAuthThroughServer = (serverRoute,formData) =>{
+    // const userAuthThroughServer = (serverRoute,formData) =>{
         
+    //     axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, formData)
+    //     .then(({ data }) =>{
+    //         storeInSession("user", JSON.stringify(data))
+    //         setUserAuth(data)
+    //     })
+    //     .catch(({ reponse }) => {
+    //         toast.error(reponse.data.error)
+    //     })
+    // }
+    const userAuthThroughServer = (serverRoute, formData) => {
         axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, formData)
-        .then(({ data }) =>{
-            storeInSession("user", JSON.stringify(data))
-            setUserAuth(data)
+        .then(({ data }) => {
+            storeInSession("user", JSON.stringify(data));
+            setUserAuth(data);
         })
-        .catch(({ reponse }) => {
-            toast.error(reponse.data.error)
-        })
-    }
+        .catch((error) => {
+            if (error.response) {
+                // The request was made, and the server responded with a status code
+                // that falls out of the range of 2xx
+                toast.error(error.response.data.error);
+            } else if (error.request) {
+                // The request was made but no response was received
+                toast.error("No response received from server");
+            } else {
+                // Something happened in setting up the request that triggered an error
+                toast.error("Error occurred while setting up request");
+            }
+            console.log(error);
+        });
+    };
+
     
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -71,6 +94,21 @@ const UserAuthForm = ({ type }) => {
 
         userAuthThroughServer(serverRoute,formData);
     };
+
+    const handleGoogleAuth = (e) =>{
+        e.preventDefault();
+        authWithGoogle().then(user =>{
+            let serverRoute = "/google-auth";
+            let formData = {
+                access_token: user.accessToken
+            }
+            userAuthThroughServer(serverRoute,formData)
+        })
+        .catch(err =>{
+            toast.error("trouble login through Google")
+            return console.log(err)
+        })
+    }
 
     return (
         access_token ?
@@ -116,13 +154,14 @@ const UserAuthForm = ({ type }) => {
                         {type.replace('-', ' ')}
                     </button>
 
-                    <div className="relative w-full flex items-center gap-2 my-10 opacity-10 uppercase text-black font-bold">
-                        <hr className="w-1/2 border-black"></hr>
+                    <div className="relative w-full flex items-center gap-2 my-10 opacity-10 uppercase font-bold">
+                        <hr className="w-1/2"></hr>
                         <p>OR</p>
-                        <hr className="w-1/2 border-black"></hr>
+                        <hr className="w-1/2"></hr>
                     </div>
 
-                    <button className="btn-dark flex items-center justify-center gap-4 w-[90%] center">
+                    <button className="btn-dark flex items-center justify-center gap-4 w-[90%] center"
+                        onClick={handleGoogleAuth}>
                         <img src={googleIcon} className="w-5" alt="Google Icon" />
                         Continue with Google
                     </button>
