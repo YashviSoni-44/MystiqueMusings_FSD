@@ -102,7 +102,7 @@ const darkTheme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#2F2A35',
+      main: '#17153B',
     },
     secondary: {
       main: '#E6D389',
@@ -285,12 +285,20 @@ function ResponsiveAppBar() {
                   <Button
                     key={page}
                     onClick={handleCloseNavMenu}
-                    sx={{ my: 2, color: 'white', display: 'block' }}
+                    sx={(theme) => ({
+                      my: 2,
+                      color: theme.palette.text.primary, // Access theme's primary text color
+                      display: 'block',
+                      '&:hover': {
+                        backgroundColor: alpha(theme.palette.primary.main, 0.1), // Light background color on hover
+                      },
+                    })}
                   >
                     {page}
                   </Button>
                 ))}
               </Box>
+
 
               {isSmallScreen ? (
                 <React.Fragment>
@@ -332,40 +340,88 @@ function ResponsiveAppBar() {
                 color="default"
               />
 
-              <Link to="/editor" className="hidden md:flex gap-2 link bg-white rounded-full h-12">
-                <DriveFileRenameOutlineIcon/>
-                <p>Write</p>         
-              </Link>
+              {access_token ? (
+              <>
+                <Link to="/dashboard/notification">
+                  <button className='w-12 h-12 rounded-full bg-grey relative hover:bg-black/40 ml-2'>
+                    <NotificationsIcon className='text-4xl'/>
+                  </button>
+                </Link>
 
-              {
-                access_token ? 
-                <>
-                  <Link to="/dashboard/notification">
-                    <button className='w-12 h-12 rounded-full bg-grey relative hover:bg-black/40 ml-2'>
-                      <NotificationsIcon className='text-4xl'/>
-                    </button>
-                  </Link>
+                <div className="relative mt-1 ml-2" onClick={handleUserNavPanel} onBlur={handleBlur}>
+                  <button className="w-12 h-12 mt-1">
+                    <img src={profile_img} className='w-12 h-12 object-cover rounded-full'/>
+                  </button>
 
-                  <div className="relative mt-1 ml-2" onClick={handleUserNavPanel} onBlur={handleBlur}>
-                    <button classNme="w-12 h-12 mt-1">
-                      <img src={profile_img} className='w-12 h-12 object-cover rounded-full'/>
-                    </button>
+                  {userNavPanel ? <UserNavigationPanel/> : ""}
+                </div>
+              </>
+            ) : (
+              <>
+                <Button
+                  component={Link}
+                  href="/editor"
+                  sx={(theme) => ({
+                    my: 2,
+                    color: theme.palette.text.primary,
+                    backgroundColor: theme.palette.background.paper,
+                    '&:hover': {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                    },
+                    margin: 1,
+                    textDecoration: 'none',
+                    borderRadius: '50px', // Oval shape
+                    padding: '8px 16px', // Same padding for consistent size
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px', // Space between icon and text
+                  })}
+                >
+                  <DriveFileRenameOutlineIcon />
+                  Write
+                </Button>
 
-                    {userNavPanel ? <UserNavigationPanel/>
-                    :""}
-                    
-                  </div>
-                </>
-                :
-                <>
-                  <Link className="btn-light py-2" style={{margin:5, textDecoration: "none"}} href="/signin">
-                    Sign In
-                  </Link>
-                  <Link className="btn-light py-2 hidden md:block" style={{margin:5, textDecoration: "none"}} href="/signup">
-                    Sign Up
-                  </Link>
-                </>
-              }
+                <Button
+                  component={Link}
+                  href="/signin"
+                  sx={(theme) => ({
+                    my: 2,
+                    color: theme.palette.primary.contrastText, // Text color for contrast
+                    backgroundColor: theme.palette.primary.main, // Primary color from theme
+                    '&:hover': {
+                      backgroundColor: theme.palette.primary.dark, // Darker shade on hover
+                    },
+                    margin: 1,
+                    textDecoration: 'none',
+                    borderRadius: '50px', // Large value for oval shape
+                    padding: '8px 16px', // Adjust padding for oval appearance
+                  })}
+                >
+                  Sign In
+                </Button>
+                <Button
+                  component={Link}
+                  href="/signup"
+                  sx={(theme) => ({
+                    my: 2,
+                    color: theme.palette.primary.contrastText, // Text color for contrast
+                    backgroundColor: theme.palette.primary.main, // Secondary color from theme
+                    '&:hover': {
+                      backgroundColor: theme.palette.primary.dark, // Darker shade on hover
+                    },
+                    margin: 1,
+                    textDecoration: 'none',
+                    borderRadius: '50px', // Large value for oval shape
+                    padding: '8px 16px', // Adjust padding for oval appearance
+                    display: { xs: 'none', md: 'block' }, // Hide on smaller screens
+                  })}
+                >
+                  Sign Up
+                </Button>
+              </>
+            )}
+
+            
 
             </Toolbar>
           </Container>
