@@ -342,6 +342,29 @@ function ResponsiveAppBar() {
 
               {access_token ? (
               <>
+                <Button
+                  component={Link}
+                  href="/editor"
+                  sx={(theme) => ({
+                    my: 2,
+                    color: theme.palette.text.primary,
+                    backgroundColor: theme.palette.background.paper,
+                    '&:hover': {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                    },
+                    margin: 1,
+                    textDecoration: 'none',
+                    borderRadius: '50px', // Oval shape
+                    padding: '8px 16px', // Same padding for consistent size
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px', // Space between icon and text
+                  })}
+                >
+                  <DriveFileRenameOutlineIcon />
+                  Write
+                </Button>
+
                 <Link to="/dashboard/notification">
                   <button className='w-12 h-12 rounded-full bg-grey relative hover:bg-black/40 ml-2'>
                     <NotificationsIcon className='text-4xl'/>
@@ -420,8 +443,6 @@ function ResponsiveAppBar() {
                 </Button>
               </>
             )}
-
-            
 
             </Toolbar>
           </Container>

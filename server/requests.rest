@@ -1,7 +1,9 @@
-POST http://localhost:5500/signin
-Content-Type: application/json
+# POST http://localhost:5500/signin
+# Content-Type: application/json
 
-{
-    "email":"abc@yahoo.com",
-    "password":"123Abc"
-}
+# {
+#     "email":"abc@yahoo.com",
+#     "password":"123Abc"
+# }
+
+GET http://localhost:5500/get-upload-url
