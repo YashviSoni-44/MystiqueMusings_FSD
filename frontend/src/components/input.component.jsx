@@ -34,7 +34,7 @@ const InputBox = ({ name, type, id, value, placeholder, icon: IconComponent }) =
                     }
                 </div>
             )}
-            <style jsx>{`
+            <style>{`
                 .input-box::placeholder {
                     color: ${themeMode === 'dark' ? '#E3E3E3' : 'black'}; // Placeholder color for visibility
                 }
