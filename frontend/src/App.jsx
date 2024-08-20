@@ -5,6 +5,7 @@ import UserAuthForm from "./pages/userAuthForm.page";
 import { createContext, useEffect, useState } from "react";
 import { lookInSession } from "./common/session";
 import Editor from "./pages/editor.pages";
+import { Toaster } from 'react-hot-toast';
 
 export const UserContext = createContext({})
 
@@ -19,6 +20,7 @@ const App = () => {
 
     return (
         <UserContext.Provider  value={{userAuth, setUserAuth}}>
+            <Toaster/>
             <Routes>
                 <Route path="/editor" element={<Editor/>}/>
                 <Route path="/" element={<ResponsiveAppBar/>}>
