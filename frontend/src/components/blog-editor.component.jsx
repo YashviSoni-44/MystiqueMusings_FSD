@@ -446,13 +446,14 @@ import axios from 'axios';
 import EditorJS from '@editorjs/editorjs';
 import { ThemeProvider, AppBar, Toolbar, Typography, Box, Button, IconButton, Container, Switch } from '@mui/material';
 import { createTheme, alpha } from '@mui/material/styles';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import MMname from '../imgs/mmname.png';
 import AnimationWrapper from '../common/page-animation';
 import { EditorContext } from '../pages/editor.pages';
 import { tools } from './tools.component';
 import toast from 'react-hot-toast';
 import DefaultBanner from '../imgs/blog banner.png'; // Imported Default Banner
+import { UserContext } from '../App';
 
 const lightTheme = createTheme({
   palette: {
@@ -477,9 +478,12 @@ const darkTheme = createTheme({
 const BlogEditor = () => {
   const [themeMode, setThemeMode] = useState('dark');
   const [bannerImage, setBannerImage] = useState(DefaultBanner); // Set Default Banner initially
-  const { blog, blog:{banner, context, tags, des}, setBlog,textEditor,setTextEditor, setEditorState} = useContext(EditorContext);
+  const { blog, blog:{banner, content, tags, des}, setBlog,textEditor,setTextEditor, setEditorState} = useContext(EditorContext);
   const { title } = blog;
   const editorInstanceRef = useRef(null);
+
+  let {userAuth:{access_token}}=useContext(UserContext)
+  let navigate=useNavigate();
 
   const currentTheme = themeMode === 'light' ? lightTheme : darkTheme;
 
@@ -489,7 +493,7 @@ const BlogEditor = () => {
       if (textEditorElement) {
         const editor = new EditorJS({
           holderId: 'textEditor',
-          data: '',
+          data: blog.content,
           tools: tools,
           placeholder: "Let's get started with blog content",
         });
@@ -550,33 +554,70 @@ const BlogEditor = () => {
   };
 
   const handlePublish = () => {
-  // Check if banner is present
-  if (!blog.banner.length) {
-    return toast.error("Upload a blog banner to publish it");
-  }
-  // Check if title is present
-  if (!blog.title.length) {
-    return toast.error("Write blog title to publish it");
-  }
-  // Add more logic for publishing
-  toast.success("Blog published successfully!"); // Example success message
+    // Check if banner is present
+    if (!blog.banner.length) {
+      return toast.error("Upload a blog banner to publish it");
+    }
+    // Check if title is present
+    if (!blog.title.length) {
+      return toast.error("Write blog title to publish it");
+    }  
 
-  if(textEditor.isReady){
-    textEditor.save().then(data=>{
-      if(data.blocks.length){
-        setBlog({...blog,content:data})
-        setEditorState("publish")
-      }
-      else{
-        return toast.error("Enter blog content to publish it")
-      }
-    })
-    .catch((err)=>{
-      console.log(err)
-    })
-  }
-};
+    if(textEditor.isReady){
+      textEditor.save().then(data=>{
+        if(data.blocks.length){
+          setBlog({...blog,content:data})
+          setEditorState("publish")
+          toast.success("Blog published successfully!"); // Example success message
+        }
+        else{
+          return toast.error("Enter blog content to publish it")
+        }
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
+    }
+  };
+  const handleSaveDraft=(e)=>{
+    if(e.target.className.includes("disable")){
+      return;
+    }
+    if(!title.length){
+      return toast.error("Write blog title before saving as a draft")
+    }
 
+    let loadingToast = toast.loading("Saving draft...")
+    e.target.classList.add("disable")
+
+    if(textEditor.isReady){
+      textEditor.save().then(content=>{
+
+        let blogObj = {
+          title, banner, des, content, tags, draft:true
+        }
+        
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/create-blog", blogObj, {
+          headers:{'Authorization':`Bearer ${access_token}`}
+        })
+        .then(()=>{
+          e.target.classList.remove("disable")
+          toast.dismiss(loadingToast);
+          toast.success("Saved Draft 👍")
+
+          setTimeout(()=>{
+            navigate("/")
+          },500);
+        })
+        .catch(({response})=>{
+          e.target.classList.remove("disable")
+          toast.dismiss(loadingToast)
+          return toast.error(response.data.error)
+        })
+      })
+    }
+    
+  }
 
   return (
     <ThemeProvider theme={currentTheme}>
@@ -608,7 +649,7 @@ const BlogEditor = () => {
                   gap: '8px',
                 })}>Publish</Button>
 
-                <Button component={Link} href="/editor" sx={(theme) => ({
+                <Button component={Link} href="/editor" onClick={handleSaveDraft} sx={(theme) => ({
                   my: 2,
                   color: theme.palette.text.primary,
                   backgroundColor: theme.palette.primary.main,
@@ -637,10 +678,11 @@ const BlogEditor = () => {
                   </label>
                 </div>
                 <textarea
+                  defaultValue={title}
                   style={{ backgroundColor: currentTheme.palette.background.paper }}
                   placeholder='Blog Title'
                   className='text-4xl font-medium w-full h-20 outline-none resize-none mt-10 leading-tight placeholder:opacity-40'
-                  onKeyDown={(e) => e.keyCode === 13 && e.preventDefault()}
+                  onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
                   onChange={handleTitleChange}
                   value={title}
                 ></textarea>

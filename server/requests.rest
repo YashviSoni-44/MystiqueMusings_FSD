@@ -6,4 +6,28 @@
 #     "password":"123Abc"
 # }
 
-GET http://localhost:5500/get-upload-url
+# GET http://localhost:5500/get-upload-url
+
+POST http://localhost:5500/create-blog
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YzYyMTNkNDI2YjRjNTc5NjMwNTdjZCIsImlhdCI6MTcyNDI2MDY2OX0.hazrJB8UUCLNLwdmyZVn0W0dpA62fbbm47BW3sXCZlo
+
+{
+    "title":"test @!#@$#$%$%$^&*(#))#*&#^ title",
+    "banner":"http://example.com/image-url",
+    "des":"hehehhe",
+    "content":{
+        "blocks":[1,2]
+    },
+    "tags":["tag1","tag2"]
+}
+
+#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YzYyMTNkNDI2YjRjNTc5NjMwNTdjZCIsImlhdCI6MTcyNDI2MDY2OX0.hazrJB8UUCLNLwdmyZVn0W0dpA62fbbm47BW3sXCZlo
+# POST http://localhost:5500/signup
+# Content-Type: application/json
+
+# {
+#     "fullname":"abc",
+#     "email":"abc@yahooooo.com",
+#     "password":"Abc@123"
+# }
