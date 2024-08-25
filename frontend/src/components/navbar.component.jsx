@@ -18,7 +18,7 @@ import MMname from '../imgs/mmname.png';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme, createTheme, ThemeProvider } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Link } from '@mui/material';
 import { UserContext } from '../App';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -130,7 +130,7 @@ function ResponsiveAppBar() {
   const [searchOpen, setSearchOpen] = useState(false); // state to control search visibility
   const [searchClose, setSearchClose] = useState(true); // state to control search icon visibility
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const [userNavPanel, setUserNavPanel]=useState(false);
 
   const handleOpenNavMenu = (event) => {
@@ -160,7 +160,17 @@ function ResponsiveAppBar() {
     },200);
   }
 
+  let navigate=useNavigate();
+
+  const handleSearch=(e)=>{
+    let query =e.target.value;
+    if(e.key=="Enter" && query.length){
+      navigate(`/search/${query}`);
+    }
+  }
+
   const {userAuth, userAuth: {access_token, profile_img}} = useContext(UserContext)
+  const isSmallScreen1 = useMediaQuery('(max-width:400px)');
 
   return (
     <ThemeModeContext.Provider value={themeMode}>
@@ -183,9 +193,13 @@ function ResponsiveAppBar() {
                 <Box
                   component="img"
                   src={MMname}
+                  // sx={{
+                  //   width: 140,
+                  //   height: 80,
+                  // }}
                   sx={{
-                    width: 140,
-                    height: 80,
+                    width: isSmallScreen1 ? 100 : 140, // Adjust the width for small screens
+                    height: isSmallScreen1 ? 60 : 80,  // Adjust the height for small screens
                   }}
                 />
               </IconButton>
@@ -257,9 +271,13 @@ function ResponsiveAppBar() {
                 <Box
                   component="img"
                   src={MMname}
+                  // sx={{
+                  //   width: 140,
+                  //   height: 80,
+                  // }}
                   sx={{
-                    width: 140,
-                    height: 80,
+                    width: isSmallScreen1 ? 100 : 140, // Adjust the width for small screens
+                    height: isSmallScreen1 ? 60 : 80,  // Adjust the height for small screens
                   }}
                 />
               </IconButton>
@@ -316,6 +334,7 @@ function ResponsiveAppBar() {
                         </SearchIconWrapper>
                         <StyledInputBase
                           placeholder="Search…"
+                          onKeyDown={handleSearch}
                           inputProps={{ 'aria-label': 'search' }}
                         />
                       </Search>
@@ -329,6 +348,7 @@ function ResponsiveAppBar() {
                   </SearchIconWrapper>
                   <StyledInputBase
                     placeholder="Search…"
+                    onKeyDown={handleSearch}
                     inputProps={{ 'aria-label': 'search' }}
                   />
                 </Search>
@@ -347,6 +367,7 @@ function ResponsiveAppBar() {
                   href="/editor"
                   sx={(theme) => ({
                     my: 2,
+                    px:5,
                     color: theme.palette.text.primary,
                     backgroundColor: theme.palette.background.paper,
                     '&:hover': {
