@@ -446,7 +446,7 @@ import axios from 'axios';
 import EditorJS from '@editorjs/editorjs';
 import { ThemeProvider, AppBar, Toolbar, Typography, Box, Button, IconButton, Container, Switch } from '@mui/material';
 import { createTheme, alpha } from '@mui/material/styles';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import MMname from '../imgs/mmname.png';
 import AnimationWrapper from '../common/page-animation';
 import { EditorContext } from '../pages/editor.pages';
@@ -484,33 +484,44 @@ const BlogEditor = () => {
 
   let {userAuth:{access_token}}=useContext(UserContext)
   let navigate=useNavigate();
+  let {blog_id}=useParams()
 
   const currentTheme = themeMode === 'light' ? lightTheme : darkTheme;
 
+  // useEffect(() => {
+  //   const initEditor = () => {
+  //     const textEditorElement = document.getElementById('textEditor');
+  //     if (textEditorElement) {
+  //       const editor = new EditorJS({
+  //         holderId: 'textEditor',
+  //         data: blog.content,
+  //         tools: tools,
+  //         placeholder: "Let's get started with blog content",
+  //       });
+
+  //       editorInstanceRef.current = editor;
+  //       setTextEditor(editor);
+  //     }
+  //   };
+
+  //   initEditor();
+
+  //   return () => {
+  //     if (editorInstanceRef.current && typeof editorInstanceRef.current.destroy === 'function') {
+  //       editorInstanceRef.current.destroy();
+  //     }
+  //   };
+  // }, [setTextEditor]);
   useEffect(() => {
-    const initEditor = () => {
-      const textEditorElement = document.getElementById('textEditor');
-      if (textEditorElement) {
-        const editor = new EditorJS({
+      if (!textEditor.isReady) {
+        setTextEditor(new EditorJS({
           holderId: 'textEditor',
-          data: blog.content,
+          data: Array.isArray(content) ? content[0] : content,
           tools: tools,
           placeholder: "Let's get started with blog content",
-        });
-
-        editorInstanceRef.current = editor;
-        setTextEditor(editor);
+        }))
       }
-    };
-
-    initEditor();
-
-    return () => {
-      if (editorInstanceRef.current && typeof editorInstanceRef.current.destroy === 'function') {
-        editorInstanceRef.current.destroy();
-      }
-    };
-  }, [setTextEditor]);
+    },[]);
 
   useEffect(() => {
     // Only fetch new banner image if the current banner image is still the default
@@ -597,7 +608,7 @@ const BlogEditor = () => {
           title, banner, des, content, tags, draft:true
         }
         
-        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/create-blog", blogObj, {
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + "/create-blog", {...blogObj, id:blog_id}, {
           headers:{'Authorization':`Bearer ${access_token}`}
         })
         .then(()=>{

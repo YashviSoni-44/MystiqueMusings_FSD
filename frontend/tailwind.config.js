@@ -11,6 +11,7 @@ export default {
             'red': '#FF4E4E',
             'transparent': 'transparent',
             'twitter': '#1DA1F2',
+            'whatsapp': '#25D366',
             'purple': '#8B46FF'
         },
 

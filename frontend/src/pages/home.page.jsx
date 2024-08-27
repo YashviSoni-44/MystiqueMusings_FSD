@@ -10,6 +10,9 @@ import {activeTabRef} from '../components/inpage-navigation.component'
 import NoDataMessage from "../components/nodata.component"
 import { filterPaginationData } from "../common/filter-pagination-data"
 import LoadMoreDataBtn from "../components/load-more.component"
+// import { Cursor } from 'react-creative-cursor';
+// import 'react-creative-cursor/dist/styles.css';
+// import icon from '../imgs/icon.png'
 
 const HomePage=()=>{
 
@@ -94,7 +97,10 @@ const HomePage=()=>{
     },[pageState])
 
     return(
-        <AnimationWrapper>
+        <>
+        {/* <Cursor isGelly={true}/> */}
+        {/* data-cursor-magnetic data-cursor-background-image={icon} data-cursor-size="200px" */}
+        <AnimationWrapper >
             <section className="h-cover flex justify-center gap-10">
                 {/* latest blog */}
                 <div className="w-full ">
@@ -179,6 +185,7 @@ const HomePage=()=>{
                 </div>
             </section>
         </AnimationWrapper>
+        </>
     )
 }
 export default HomePage

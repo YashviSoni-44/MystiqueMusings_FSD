@@ -41,6 +41,20 @@
 #     "query":"12ayashvisoni"
 # }
 
+# POST http://localhost:5500/get-profile
+# Content-Type: application/json
+
+# {
+#     "username":"yashvisoni599"
+# }
+
+# POST http://localhost:5500/get-blog
+# Content-Type: application/json
+
+# {
+#     "blog_id":"title2xqQdQ5967CNk0KiEHl7wn"
+# }
+
 POST http://localhost:5500/get-profile
 Content-Type: application/json
 
