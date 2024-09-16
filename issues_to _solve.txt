@@ -1,2 +1,4 @@
 1. banner image
 2. like issue
+3. social media icons in edit profile page
+4. profile image updation in edit profile page

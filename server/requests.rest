@@ -2,8 +2,8 @@
 # Content-Type: application/json
 
 # {
-#     "email":"abc@yahoo.com",
-#     "password":"123Abc"
+#     "email":"tay@gmail.com",
+#     "password":"Tay013"
 # }
 
 # GET http://localhost:5500/get-upload-url
@@ -55,9 +55,17 @@
 #     "blog_id":"title2xqQdQ5967CNk0KiEHl7wn"
 # }
 
-POST http://localhost:5500/get-profile
-Content-Type: application/json
+# POST http://localhost:5500/get-profile
+# Content-Type: application/json
 
-{
-    "username":"yashvisoni599"
-}
+# {
+#     "username":"yashvisoni599"
+# }
+
+# POST http://localhost:5500/change-password
+# Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YmUzYjUyNWYxMWUwZDc0YTA0N2JmOCIsImlhdCI6MTcyNjQ4NTUzNH0.748yH_8kIks5xPRhO-yEwp53y4Ea3EY4IQdMBRBoY8g
+# {
+#     "currentPassword":"Tay1234",
+#     "newPassword":"Tay013"
+# }

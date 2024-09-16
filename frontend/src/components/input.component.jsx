@@ -3,7 +3,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { ThemeModeContext } from '../components/navbar.component';
 
-const InputBox = ({ name, type, id, value, placeholder, icon: IconComponent }) => {
+const InputBox = ({ name, type, id, value, placeholder, icon: IconComponent, disable=false }) => {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const themeMode = useContext(ThemeModeContext);
 
@@ -15,6 +15,7 @@ const InputBox = ({ name, type, id, value, placeholder, icon: IconComponent }) =
                 placeholder={placeholder}
                 defaultValue={value}
                 id={id}
+                disabled={disable}
                 className="input-box"
                 style={{
                     backgroundColor: themeMode === 'dark' ? '#1D1D1D' : '#E3DFFD',

@@ -175,7 +175,7 @@ function ResponsiveAppBar() {
   return (
     <ThemeModeContext.Provider value={themeMode}>
       <ThemeProvider theme={themeMode === 'light' ? lightTheme : darkTheme}>
-        <AppBar position="static">
+        <AppBar position="static" className='z-50'>
           <Container maxWidth="xl">
             <Toolbar disableGutters>
               <IconButton
